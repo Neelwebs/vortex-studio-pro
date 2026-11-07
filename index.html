@@ -1828,60 +1828,59 @@
             }
         }
 
-        /* 7. ZERO-CRASH BINARY BLOB EXPORT (4K, 8K, 12K, 16K) & BATCH ZIP */
-        function setExportResolution(width, label, btnEl) {
-            targetExportWidth = width;
-            document.getElementById('statExport').innerText = label;
-            if (btnEl) {
-                btnEl.parentElement.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-                btnEl.classList.add('active');
+     /* 7. ZERO-CRASH BINARY BLOB EXPORT (4K, 8K, 12K, 16K) & BATCH ZIP */
+function setExportResolution(width, label, btnEl) {
+    targetExportWidth = width;
+    document.getElementById('statExport').innerText = label;
+    if (btnEl) {
+        btnEl.parentElement.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+    }
+    showToast('Export target set to ' + label);
+}
+
+function downloadImage() {
+    if (!isLoaded) {
+        showToast('Please open a photo first!', 'error');
+        return;
+    }
+    showToast('Rendering high-resolution export buffer...');
+
+    setTimeout(() => {
+        let outW = canvas.width;
+        let outH = canvas.height;
+
+        if (targetExportWidth > 0) {
+            // Upscales mathematical dimensions to your 4K/8K/16K selection
+            const maxSafeDim = 15360; // Supports up to 16K Masterpiece
+            const aspect = canvas.height / canvas.width;
+            outW = Math.min(targetExportWidth, maxSafeDim);
+            outH = Math.round(outW * aspect);
+            if (outH > maxSafeDim) {
+                outH = maxSafeDim;
+                outW = Math.round(outH / aspect);
             }
-            showToast('Export target set to ' + label);
         }
 
-        function downloadImage() {
-            if (!isLoaded) {
-                showToast('Please open a photo first!', 'error');
+        const expCanvas = document.createElement('canvas');
+        expCanvas.width = outW;
+        expCanvas.height = outH;
+        const expCtx = expCanvas.getContext('2d');
+        expCtx.imageSmoothingEnabled = true;
+        expCtx.imageSmoothingQuality = 'high';
+        expCtx.drawImage(canvas, 0, 0, outW, outH);
+
+        expCanvas.toBlob((blob) => {
+            if (!blob || blob.size === 0) {
+                canvas.toBlob((fbBlob) => {
+                    triggerBlobDownload(fbBlob, `vortex-masterpiece-${canvas.width}x${canvas.height}.png`);
+                }, 'image/png');
                 return;
             }
-            showToast('Rendering high-resolution export buffer...');
-
-            setTimeout(() => {
-                let outW = canvas.width;
-                let outH = canvas.height;
-
-                if (targetExportWidth > 0) {
-                    // Cap safely within hardware canvas ceiling so browser never outputs 0-byte file
-                    const maxSafeDim = 7680;
-                    const aspect = canvas.height / canvas.width;
-                    outW = Math.min(targetExportWidth, maxSafeDim);
-                    outH = Math.round(outW * aspect);
-                    if (outH > maxSafeDim) {
-                        outH = maxSafeDim;
-                        outW = Math.round(outH / aspect);
-                    }
-                }
-
-                const expCanvas = document.createElement('canvas');
-                expCanvas.width = outW;
-                expCanvas.height = outH;
-                const expCtx = expCanvas.getContext('2d');
-                expCtx.imageSmoothingEnabled = true;
-                expCtx.imageSmoothingQuality = 'high';
-                expCtx.drawImage(canvas, 0, 0, outW, outH);
-
-                expCanvas.toBlob((blob) => {
-                    if (!blob || blob.size === 0) {
-                        // Immediate native fallback if GPU memory exceeded
-                        canvas.toBlob((fbBlob) => {
-                            triggerBlobDownload(fbBlob, `vortex-masterpiece-${canvas.width}x${canvas.height}.png`);
-                        }, 'image/png');
-                        return;
-                    }
-                    triggerBlobDownload(blob, `vortex-masterpiece-${outW}x${outH}.png`);
-                }, 'image/png');
-            }, 50);
-        }
+            triggerBlobDownload(blob, `vortex-masterpiece-${outW}x${outH}.png`);
+        }, 'image/png');
+    }, 50);
+}
 
         function triggerBlobDownload(blob, filename) {
             const url = URL.createObjectURL(blob);
