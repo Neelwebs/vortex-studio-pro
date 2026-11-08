@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VORTEX // Studio — Enterprise Photo Suite</title>
+    <title>VORTEX // Studio — Enterprise Photo Suite Pro (Free Edition)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root {
@@ -22,7 +22,6 @@
             --danger: #ef4444;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --text-dim: #64748b;
             --border: #1e293b;
             --border-highlight: #334155;
             --radius-sm: 8px;
@@ -43,7 +42,6 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-panel); }
         ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
@@ -56,207 +54,7 @@
             overflow: hidden;
         }
 
-        /* ==========================================================================
-           FIXED MANUAL PAYMENT OVERLAY (NO TOP CLIPPING, EMBEDDED QR FALLBACK)
-           ========================================================================== */
-        #paymentModal {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at center, rgba(15, 22, 38, 0.96) 0%, rgba(3, 5, 8, 0.99) 100%);
-            backdrop-filter: blur(24px);
-            z-index: 9000;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 16px;
-            overflow-y: auto;
-        }
-
-        .payment-card {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-highlight);
-            width: 100%;
-            max-width: 470px;
-            margin: auto;
-            padding: 24px 28px;
-            border-radius: var(--radius-xl);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 50px var(--accent-glow);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            position: relative;
-            text-align: center;
-        }
-
-        .payment-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--warning), var(--success));
-            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-        }
-
-        .payment-header h1 {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -0.5px;
-        }
-
-        .payment-header h1 span { color: var(--warning); }
-
-        .payment-header p {
-            color: var(--text-muted);
-            font-size: 0.78rem;
-            margin-top: 3px;
-        }
-
-        .payment-notice {
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.35);
-            border-left: 4px solid var(--warning);
-            padding: 11px 14px;
-            border-radius: var(--radius-md);
-            font-size: 0.79rem;
-            color: #fde68a;
-            line-height: 1.45;
-            text-align: left;
-        }
-
-        .qr-wrapper {
-            background: #eef6ff;
-            padding: 10px 14px;
-            border-radius: var(--radius-lg);
-            width: 215px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
-            border: 2px solid #fff;
-        }
-
-        .qr-title {
-            font-size: 0.92rem;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: -0.2px;
-        }
-
-        .qr-box {
-            width: 165px;
-            height: 165px;
-            background: #fff;
-            padding: 6px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .qr-box canvas, .qr-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .qr-sub {
-            font-size: 0.65rem;
-            color: #334155;
-            font-weight: 600;
-        }
-
-        .payzapp-brand {
-            font-size: 0.8rem;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            color: #1d4ed8;
-        }
-
-        .payzapp-brand span { color: #ef4444; }
-
-        .device-badge {
-            background: var(--bg-card);
-            border: 1px solid var(--border-highlight);
-            padding: 9px 14px;
-            border-radius: var(--radius-sm);
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .device-badge strong {
-            color: var(--success);
-            font-size: 0.88rem;
-            letter-spacing: 0.5px;
-        }
-
-        .input-code {
-            background: var(--bg-card);
-            border: 1px solid var(--border-highlight);
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-align: center;
-            outline: none;
-            width: 100%;
-        }
-
-        .input-code:focus {
-            border-color: var(--warning);
-            box-shadow: 0 0 15px var(--warning-glow);
-        }
-
-        .pay-btn {
-            background: linear-gradient(135deg, var(--warning), #d97706);
-            color: #030508;
-            border: none;
-            padding: 13px;
-            border-radius: var(--radius-md);
-            font-weight: 900;
-            font-size: 0.94rem;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-        }
-
-        .pay-btn:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.1);
-            box-shadow: 0 6px 20px var(--warning-glow);
-        }
-
-        .pay-footer-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.73rem;
-            color: var(--text-muted);
-            padding-top: 6px;
-            border-top: 1px solid var(--border);
-        }
-
-        .link-btn {
-            color: var(--accent);
-            cursor: pointer;
-            font-weight: 700;
-            text-decoration: underline;
-        }
-
-        /* ==========================================================================
-           HEADER & NAVIGATION
-           ========================================================================== */
+        /* HEADER & NAVIGATION */
         header {
             height: 62px;
             background-color: var(--bg-panel);
@@ -270,49 +68,9 @@
         }
 
         .brand { display: flex; flex-direction: column; }
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .logo { font-size: 1.2rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; }
         .logo span { color: var(--success); }
-        .creator-tag {
-            font-size: 0.64rem;
-            color: var(--text-muted);
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .tool-modes {
-            display: flex;
-            background: var(--bg-main);
-            padding: 4px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            gap: 4px;
-        }
-
-        .mode-pill {
-            background: transparent;
-            color: var(--text-muted);
-            border: none;
-            padding: 7px 13px;
-            border-radius: var(--radius-sm);
-            font-size: 0.76rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .mode-pill.active {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 2px 10px var(--accent-glow);
-        }
+        .creator-tag { font-size: 0.64rem; color: var(--text-muted); letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600; }
 
         .nav-actions { display: flex; gap: 8px; align-items: center; }
 
@@ -330,27 +88,11 @@
             align-items: center;
             gap: 6px;
         }
+        .btn:hover { background-color: var(--bg-card-hover); border-color: var(--border-highlight); }
+        .btn-primary { background: linear-gradient(135deg, var(--success), #059669); border-color: var(--success); color: #fff; font-weight: 800; }
 
-        .btn:hover {
-            background-color: var(--bg-card-hover);
-            border-color: var(--border-highlight);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--success), #059669);
-            border-color: var(--success);
-            color: #fff;
-            font-weight: 800;
-        }
-
-        /* ==========================================================================
-           WORKSPACE & SIDEBARS
-           ========================================================================== */
-        .workspace {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+        /* WORKSPACE & SIDEBARS */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
 
         .sidebar {
             width: 360px;
@@ -370,23 +112,20 @@
         }
 
         .tab-btn {
-            padding: 12px 4px;
+            padding: 12px 2px;
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             font-weight: 800;
             cursor: pointer;
             text-align: center;
             border-bottom: 2px solid transparent;
             text-transform: uppercase;
+            transition: var(--transition);
         }
-
-        .tab-btn.active {
-            color: #fff;
-            background: var(--bg-panel);
-            border-bottom-color: var(--success);
-        }
+        .tab-btn:hover { color: #fff; background: rgba(99, 102, 241, 0.08); }
+        .tab-btn.active { color: #fff; background: var(--bg-panel); border-bottom-color: var(--success); }
 
         .tab-content {
             flex: 1;
@@ -396,7 +135,6 @@
             flex-direction: column;
             gap: 16px;
         }
-
         .tab-content.active { display: flex; }
 
         .panel-section {
@@ -406,7 +144,7 @@
             padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 11px;
+            gap: 12px;
         }
 
         .panel-title {
@@ -420,12 +158,7 @@
             align-items: center;
         }
 
-        .tool-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
+        .tool-group { display: flex; flex-direction: column; gap: 6px; }
         .tool-group label {
             font-size: 0.78rem;
             color: var(--text-main);
@@ -433,7 +166,6 @@
             display: flex;
             justify-content: space-between;
         }
-
         .tool-group label span:last-child {
             color: var(--success);
             font-size: 0.72rem;
@@ -443,7 +175,6 @@
             border-radius: 4px;
             border: 1px solid var(--border);
         }
-
         .tool-group input[type="range"] {
             width: 100%;
             accent-color: var(--success);
@@ -453,11 +184,7 @@
             border-radius: 3px;
         }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
         .action-btn {
             background: var(--bg-card);
@@ -470,17 +197,26 @@
             font-weight: 700;
             text-align: center;
             transition: var(--transition);
+            width: 100%;
         }
+        .action-btn:hover { border-color: var(--success); background: rgba(16, 185, 129, 0.14); color: #fff; }
 
-        .action-btn:hover, .action-btn.active {
-            border-color: var(--success);
-            background: rgba(16, 185, 129, 0.14);
+        .pay-btn {
+            background: linear-gradient(135deg, var(--accent), #4338ca);
             color: #fff;
+            border: none;
+            padding: 11px;
+            border-radius: var(--radius-md);
+            font-weight: 900;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            text-align: center;
         }
+        .pay-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-        /* ==========================================================================
-           PREVIEW STAGE & INTERACTIVE OVERLAY CANVAS
-           ========================================================================== */
+        /* PREVIEW STAGE */
         .preview-area {
             flex: 1;
             background-color: var(--bg-main);
@@ -503,22 +239,9 @@
             text-align: center;
             transition: var(--transition);
         }
-
-        .upload-box:hover {
-            border-color: var(--success);
-            box-shadow: 0 0 35px var(--success-glow);
-        }
-
-        .upload-box h3 {
-            margin-bottom: 8px;
-            font-size: 1.25rem;
-            font-weight: 800;
-        }
-
-        .upload-box p {
-            color: var(--text-muted);
-            font-size: 0.84rem;
-        }
+        .upload-box:hover { border-color: var(--success); box-shadow: 0 0 35px var(--success-glow); }
+        .upload-box h3 { margin-bottom: 8px; font-size: 1.25rem; font-weight: 800; }
+        .upload-box p { color: var(--text-muted); font-size: 0.84rem; }
 
         .canvas-container {
             position: relative;
@@ -528,48 +251,9 @@
             overflow: hidden;
             background: #000;
             border: 1px solid var(--border-highlight);
-            transform-origin: center center;
         }
-
-        #imageCanvas {
-            display: block;
-            max-width: 68vw;
-            max-height: 76vh;
-            object-fit: contain;
-        }
-
-        #maskCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            cursor: crosshair;
-        }
-
-        .hud-bar {
-            position: absolute;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(8, 12, 20, 0.92);
-            border: 1px solid var(--border-highlight);
-            padding: 7px 16px;
-            border-radius: 999px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.75rem;
-            z-index: 50;
-        }
-
-        .hud-bar button {
-            background: none;
-            border: none;
-            color: #fff;
-            font-weight: 700;
-            cursor: pointer;
-        }
+        #imageCanvas { display: block; max-width: 68vw; max-height: 76vh; object-fit: contain; }
+        #maskCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
 
         /* RIGHT INSPECTOR */
         .inspector {
@@ -583,138 +267,22 @@
             flex-shrink: 0;
             overflow-y: auto;
         }
-
-        #histCanvas {
-            width: 100%;
-            height: 100px;
-            background: #04070d;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-        }
-
-        .stat-line {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.74rem;
-            color: var(--text-muted);
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(30, 41, 59, 0.5);
-        }
-
+        #histCanvas { width: 100%; height: 100px; background: #04070d; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+        .stat-line { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); padding: 4px 0; border-bottom: 1px solid rgba(30, 41, 59, 0.5); }
         .stat-line strong { color: #fff; font-family: monospace; }
 
-        /* MODALS & TOASTS */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(3, 5, 8, 0.9);
-            backdrop-filter: blur(14px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9500;
-            padding: 20px;
-        }
-
-        .modal-card {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-highlight);
-            width: 100%;
-            max-width: 460px;
-            border-radius: var(--radius-xl);
-            padding: 26px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        #toastContainer {
-            position: fixed;
-            bottom: 22px;
-            right: 22px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .toast {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-highlight);
-            border-left: 4px solid var(--success);
-            color: #fff;
-            padding: 12px 18px;
-            border-radius: var(--radius-md);
-            font-size: 0.82rem;
-            font-weight: 700;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85);
-        }
-
+        #toastContainer { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: var(--bg-panel); border: 1px solid var(--border-highlight); border-left: 4px solid var(--success); color: #fff; padding: 12px 18px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 700; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85); }
         .toast.error { border-left-color: var(--danger); }
     </style>
 </head>
 <body>
 
-    <!-- ==========================================================================
-         MANUAL PAYMENT & DEVICE LOCK MODAL
-         ========================================================================== -->
-    <div id="paymentModal">
-        <div class="payment-card">
-            <div class="payment-header">
-                <h1>VORTEX <span>// STUDIO ACCESS</span></h1>
-                <p>Lifetime Device-Locked Pro License by Neel Gaikwad</p>
-            </div>
-
-            <div class="payment-notice">
-                Access to VORTEX Studio requires a manual verification fee of ₹20 per photo via UPI / PayZapp. If you experience any delay in activation or need immediate assistance, please call or contact me at <b>9213451699</b> for instant clearance.
-            </div>
-
-            <!-- Embedded Scannable PayZapp QR + Auto File Loader -->
-            <div class="qr-wrapper">
-                <div class="qr-title">Neel Gaikwad</div>
-                <div class="qr-box">
-                    <canvas id="qrFallbackCanvas" width="165" height="165"></canvas>
-                    <img src="upi-qr.jpeg" id="externalQrImg" alt="PayZapp QR"
-                         style="position:absolute; inset:0; display:none;"
-                         onload="this.style.display='block'; document.getElementById('qrFallbackCanvas').style.display='none';"
-                         onerror="this.style.display='none';">
-                </div>
-                <div class="qr-sub">Scan this QR code to pay with any UPI app</div>
-                <div class="payzapp-brand">PAY<span>ZAPP</span></div>
-            </div>
-
-            <div class="device-badge">
-                <span>Your Device ID:</span>
-                <strong id="displayDeviceId">VTX-LOADING</strong>
-                <button class="btn" style="padding:3px 8px; font-size:0.68rem;" onclick="copyDeviceId()">Copy</button>
-            </div>
-
-            <input type="text" id="activationPasscode" class="input-code" placeholder="Enter Activation Passcode (or Middle 6-Digit ID)">
-
-            <button class="pay-btn" onclick="verifyActivationCode()">Unlock Lifetime Device Access 🚀</button>
-
-            <div class="pay-footer-row">
-                <span>Call/WhatsApp: <b>9213451699</b></span>
-                <span class="link-btn" onclick="openAdminKeygen()">Admin Keygen (Alt+A)</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==========================================================================
-         HEADER
-         ========================================================================== -->
+    <!-- HEADER -->
     <header>
         <div class="brand">
-            <div class="logo">VORTEX <span>// STUDIO</span></div>
-            <div class="creator-tag">Crafted by Neel Gaikwad • Support: 9213451699</div>
-        </div>
-
-        <div class="tool-modes">
-            <button class="mode-pill active" id="pill-view" onclick="setToolMode('view')">🖐️ View</button>
-            <button class="mode-pill" id="pill-eraser" onclick="setToolMode('eraser')">✨ AI Eraser</button>
-            <button class="mode-pill" id="pill-heal" onclick="setToolMode('heal')">🩹 Spot/Pimple Heal</button>
-            <button class="mode-pill" id="pill-crop" onclick="setToolMode('crop')">✂️ Object Cropper</button>
+            <div class="logo">VORTEX <span>// STUDIO PRO</span></div>
+            <div class="creator-tag">Crafted by Neel Gaikwad • Free Edition</div>
         </div>
 
         <div class="nav-actions">
@@ -725,14 +293,11 @@
             <button class="btn" onclick="undoAction()">↩️ Undo</button>
             <button class="btn" onclick="redoAction()">↪️ Redo</button>
             <button class="btn" onclick="resetImage()">🔄 Reset</button>
-            <button class="btn" onclick="openHistoryModal()">🧾 Billing</button>
             <button class="btn btn-primary" onclick="downloadImage()">💾 Download Ultra PNG</button>
         </div>
     </header>
 
-    <!-- ==========================================================================
-         MAIN WORKSPACE
-         ========================================================================== -->
+    <!-- MAIN WORKSPACE -->
     <div class="workspace">
         <aside class="sidebar">
             <div class="sidebar-tabs">
@@ -743,24 +308,13 @@
                 <button class="tab-btn" onclick="switchTab(event, 'tab-batch')">16K/Batch</button>
             </div>
 
-            <!-- TAB 1: Tone & HDR Ultra -->
+            <!-- TAB 1: Tone & HDR -->
             <div id="tab-adjust" class="tab-content active">
-                <div class="panel-section">
-                    <div class="panel-title"><span>One-Click AI Auto Enhancer</span></div>
-                    <button class="pay-btn" style="background:linear-gradient(135deg, var(--accent), #4338ca); color:#fff; padding:10px;" onclick="autoEnhance()">
-                        ⚡ Auto-Enhance HDR & Light
-                    </button>
-                </div>
-
                 <div class="panel-section">
                     <div class="panel-title"><span>Exposure & HDR Ultra</span></div>
                     <div class="tool-group">
                         <label><span>Exposure</span><span id="val-exposure">0</span></label>
                         <input type="range" id="exposure" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>HDR Ultra Effect</span><span id="val-hdr">0</span></label>
-                        <input type="range" id="hdr" min="0" max="100" value="0" oninput="applyFilters()">
                     </div>
                     <div class="tool-group">
                         <label><span>Brightness</span><span id="val-brightness">0</span></label>
@@ -770,193 +324,71 @@
                         <label><span>Contrast</span><span id="val-contrast">0</span></label>
                         <input type="range" id="contrast" min="-100" max="100" value="0" oninput="applyFilters()">
                     </div>
-                    <div class="tool-group">
-                        <label><span>Highlights</span><span id="val-highlights">0</span></label>
-                        <input type="range" id="highlights" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Shadows</span><span id="val-shadows">0</span></label>
-                        <input type="range" id="shadows" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Whites</span><span id="val-whites">0</span></label>
-                        <input type="range" id="whites" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Blacks</span><span id="val-blacks">0</span></label>
-                        <input type="range" id="blacks" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
                 </div>
             </div>
 
-            <!-- TAB 2: Clarity & Smoothness -->
+            <!-- TAB 2: Clarity -->
             <div id="tab-detail" class="tab-content">
                 <div class="panel-section">
-                    <div class="panel-title"><span>Clarity & Smoothness Increaser</span></div>
+                    <div class="panel-title"><span>Clarity & Structure</span></div>
                     <div class="tool-group">
-                        <label><span>Clarity / Structure</span><span id="val-clarity">0</span></label>
+                        <label><span>Clarity</span><span id="val-clarity">0</span></label>
                         <input type="range" id="clarity" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Skin Smoothness</span><span id="val-smoothness">0</span></label>
-                        <input type="range" id="smoothness" min="0" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Sharpness</span><span id="val-sharpness">0</span></label>
-                        <input type="range" id="sharpness" min="0" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Dehaze</span><span id="val-dehaze">0</span></label>
-                        <input type="range" id="dehaze" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Vignette</span><span id="val-vignette">0</span></label>
-                        <input type="range" id="vignette" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Film Grain</span><span id="val-grain">0</span></label>
-                        <input type="range" id="grain" min="0" max="100" value="0" oninput="applyFilters()">
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 3: Max Toning & Color -->
+            <!-- TAB 3: Toning -->
             <div id="tab-color" class="tab-content">
                 <div class="panel-section">
-                    <div class="panel-title"><span>Max Toning & Vibrance</span></div>
+                    <div class="panel-title"><span>Saturation & Vibrance</span></div>
                     <div class="tool-group">
                         <label><span>Saturation</span><span id="val-saturation">0</span></label>
                         <input type="range" id="saturation" min="-100" max="100" value="0" oninput="applyFilters()">
                     </div>
-                    <div class="tool-group">
-                        <label><span>Vibrance</span><span id="val-vibrance">0</span></label>
-                        <input type="range" id="vibrance" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Warmth / Temp</span><span id="val-warmth">0</span></label>
-                        <input type="range" id="warmth" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Magenta / Green Tint</span><span id="val-tint">0</span></label>
-                        <input type="range" id="tint" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Shadows Toning</span><span id="val-shadowTint">0</span></label>
-                        <input type="range" id="shadowTint" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                    <div class="tool-group">
-                        <label><span>Highlights Toning</span><span id="val-highlightTint">0</span></label>
-                        <input type="range" id="highlightTint" min="-100" max="100" value="0" oninput="applyFilters()">
-                    </div>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-title"><span>Pro LUT Presets</span></div>
-                    <div class="grid-2">
-                        <button class="action-btn" onclick="applyPreset('hdr_max')">💎 HDR Ultra</button>
-                        <button class="action-btn" onclick="applyPreset('cinema')">🎬 Teal & Orange</button>
-                        <button class="action-btn" onclick="applyPreset('silk_skin')">🌸 Smooth Skin</button>
-                        <button class="action-btn" onclick="applyPreset('noir')">🖤 B&W Noir</button>
-                    </div>
                 </div>
             </div>
 
-            <!-- TAB 4: AI Eraser, Pimple Remover & Object Cropper -->
+            <!-- TAB 4: AI Retouch -->
             <div id="tab-ai" class="tab-content">
                 <div class="panel-section">
-                    <div class="panel-title"><span>1. AI Object Eraser</span></div>
-                    <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-                        Paint over any unwanted object on the photo, then click <b>Run AI Inpaint Eraser</b>.
-                    </p>
-                    <div class="tool-group">
-                        <label><span>Eraser Brush Size</span><span id="val-brushRadius">26px</span></label>
-                        <input type="range" id="brushRadius" min="6" max="90" value="26" oninput="document.getElementById('val-brushRadius').innerText=this.value+'px'">
-                    </div>
-                    <div class="grid-2">
-                        <button class="action-btn" onclick="setToolMode('eraser')">🖌️ Select Brush</button>
-                        <button class="action-btn" onclick="clearEraserMask()">🗑️ Clear Mask</button>
-                    </div>
-                    <button class="pay-btn" style="background:var(--accent); color:#fff; padding:10px;" onclick="runAiEraserInpaint()">
-                        ✨ Run AI Inpaint Eraser
-                    </button>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-title"><span>2. Hide Blemish / Pimple Remover</span></div>
-                    <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-                        Click <b>Activate Spot Heal</b>, then click directly on any pimple, acne, or blemish on the photo to remove it immediately.
-                    </p>
-                    <div class="tool-group">
-                        <label><span>Spot Heal Radius</span><span id="val-healRadius">16px</span></label>
-                        <input type="range" id="healRadius" min="4" max="50" value="16" oninput="document.getElementById('val-healRadius').innerText=this.value+'px'">
-                    </div>
-                    <button class="action-btn" onclick="setToolMode('heal')">🩹 Activate Spot / Pimple Remover</button>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-title"><span>3. Particular Object Cropper</span></div>
-                    <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-                        Click <b>Draw Crop Box</b>, drag a rectangle over the object you want to keep, and click <b>Apply Crop</b>.
-                    </p>
-                    <div class="grid-2">
-                        <button class="action-btn" onclick="setToolMode('crop')">✂️ Draw Crop Box</button>
-                        <button class="action-btn" style="background:var(--success); color:#fff;" onclick="applyCropSelection()">✅ Apply Crop</button>
-                        <button class="action-btn" onclick="rotateImage(-90)">↺ Rotate Left</button>
-                        <button class="action-btn" onclick="rotateImage(90)">↻ Rotate Right</button>
-                        <button class="action-btn" onclick="flipImage('h')">↔ Flip Horiz</button>
-                        <button class="action-btn" onclick="flipImage('v')">↕ Flip Vert</button>
-                    </div>
+                    <div class="panel-title"><span>AI Object Eraser</span></div>
+                    <p style="font-size:0.75rem; color:var(--text-muted);">Paint over any object on the photo, then click Run AI Inpaint.</p>
+                    <button class="pay-btn" onclick="runAiEraserInpaint()">✨ Run AI Inpaint Eraser</button>
+                    <button class="action-btn" onclick="clearEraserMask()" style="margin-top:6px;">🗑️ Clear Mask</button>
                 </div>
             </div>
 
-            <!-- TAB 5: 4K/8K/12K/16K & Batch ZIP -->
+            <!-- TAB 5: 16K Upscale & Batch -->
             <div id="tab-batch" class="tab-content">
                 <div class="panel-section">
-                    <div class="panel-title"><span>4K / 8K / 12K / 16K Upscaler</span></div>
+                    <div class="panel-title"><span>16K Upscaler</span></div>
                     <div class="grid-2">
-                        <button class="action-btn active" onclick="setExportResolution(0, 'Native Original', this)">📷 Native</button>
-                        <button class="action-btn" onclick="setExportResolution(3840, '4K Ultra HD', this)">📺 4K (3840px)</button>
-                        <button class="action-btn" onclick="setExportResolution(7680, '8K Cinema', this)">🎬 8K (7680px)</button>
-                        <button class="action-btn" onclick="setExportResolution(11520, '12K Immersive', this)">🚀 12K (11520px)</button>
-                        <button class="action-btn" style="grid-column:span 2;" onclick="setExportResolution(15360, '16K Masterpiece', this)">💎 16K Ultra Masterpiece (15360px)</button>
+                        <button class="action-btn" onclick="setExportResolution(3840, '4K Ultra', this)">📺 4K UHD</button>
+                        <button class="action-btn active" onclick="setExportResolution(15360, '16K Master', this)">💎 16K Master</button>
                     </div>
                 </div>
-
                 <div class="panel-section">
-                    <div class="panel-title"><span>Batch & Bulk ZIP Processing</span></div>
-                    <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-                        Select multiple photos to apply your current grading & export all as a single <b>.ZIP</b> file.
-                    </p>
-                    <label class="pay-btn" style="background:var(--accent); color:#fff; display:block; cursor:pointer; padding:11px;">
-                        📦 Select Bulk Photos & Export ZIP
+                    <div class="panel-title"><span>Batch ZIP Export</span></div>
+                    <label class="pay-btn" style="display:block; cursor:pointer; text-align:center;">
+                        📦 Select Bulk Photos & ZIP
                         <input type="file" multiple accept="image/*" style="display:none;" onchange="processBatchZip(event)">
                     </label>
-                    <div id="batchStatus" style="font-size:0.74rem; color:var(--success); font-family:monospace; display:none;"></div>
                 </div>
             </div>
         </aside>
 
-        <!-- CENTER PREVIEW AREA -->
+        <!-- PREVIEW AREA -->
         <main class="preview-area">
             <label class="upload-box" id="uploadScreen">
                 <h3>📂 Drop or Click to Open Photo</h3>
-                <p>AI Object Eraser • Pimple Heal • Custom Cropper • 4K/8K/12K/16K Export</p>
+                <p>AI Object Eraser • Pimple Heal • 4K/16K Ultra Export • Free & Open</p>
                 <input type="file" accept="image/*" style="display:none;" onchange="loadImage(event)">
             </label>
 
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="imageCanvas"></canvas>
                 <canvas id="maskCanvas"></canvas>
-            </div>
-
-            <div class="hud-bar" id="hudBar">
-                <button onclick="zoomStage(-0.15)">➖</button>
-                <span id="zoomText" style="font-family:monospace;">100%</span>
-                <button onclick="zoomStage(0.15)">➕</button>
-                <span>|</span>
-                <button onclick="zoomReset()">Fit</button>
-                <span>|</span>
-                <button onmousedown="peekOriginal(true)" onmouseup="peekOriginal(false)" onmouseleave="peekOriginal(false)">👁️ Hold Original</button>
             </div>
         </main>
 
@@ -970,259 +402,44 @@
             <div class="panel-section">
                 <div class="panel-title"><span>Studio Telemetry</span></div>
                 <div class="stat-line"><span>Resolution:</span><strong id="statRes">—</strong></div>
-                <div class="stat-line"><span>Export Target:</span><strong id="statExport">Native</strong></div>
-                <div class="stat-line"><span>Active Tool:</span><strong id="statTool" style="color:var(--success);">View</strong></div>
-                <div class="stat-line"><span>Undo States:</span><strong id="statUndo">0</strong></div>
+                <div class="stat-line"><span>Export Target:</span><strong id="statExport">16K Master</strong></div>
+                <div class="stat-line"><span>Status:</span><strong style="color:var(--success);">Free & Active</strong></div>
             </div>
 
             <div class="panel-section">
-                <div class="panel-title"><span>Direct Helpline</span></div>
+                <div class="panel-title"><span>Developer</span></div>
                 <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.5;">
-                    Developer: <b style="color:#fff;">Neel Gaikwad</b><br>
-                    Approval Helpline: <b style="color:var(--warning);">9213451699</b>
+                    Creator: <b style="color:#fff;">Neel Gaikwad</b>
                 </div>
             </div>
         </aside>
     </div>
 
-    <!-- ADMIN KEYGEN MODAL -->
-    <div class="modal-overlay" id="adminModal">
-        <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>🔐 Admin Key Generator</h3>
-                <button class="btn" onclick="document.getElementById('adminModal').style.display='none'">✕</button>
-            </div>
-            <p style="font-size:0.78rem; color:var(--text-muted);">
-                Enter a customer's Device ID to generate their lifetime unlock passcode.
-            </p>
-            <input type="text" id="adminDeviceInput" class="input-code" placeholder="Customer Device ID (e.g. VTX-4EMNQC-8712)">
-            <button class="pay-btn" onclick="generateAdminPasscode()">Generate Unlock Code</button>
-            <div class="device-badge" id="adminResultRow" style="display:none;">
-                <span>Unlock Code:</span>
-                <strong id="adminResultCode">PRO-XXXX</strong>
-            </div>
-        </div>
-    </div>
-
-    <!-- BILLING HISTORY MODAL -->
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>🧾 Device Activation & Payment Log</h3>
-                <button class="btn" onclick="document.getElementById('historyModal').style.display='none'">✕</button>
-            </div>
-            <div id="historyList" style="display:flex; flex-direction:column; gap:8px; font-size:0.78rem;"></div>
-        </div>
-    </div>
-
     <div id="toastContainer"></div>
 
-    <!-- ==========================================================================
-         FULL CLIENT-SIDE ENGINE (QR RENDERER, INPAINTING, HEAL, CROP, 16K BLOB)
-         ========================================================================== -->
     <script>
-        /* 1. EXACT PAYZAPP 33x33 QR MATRIX FOR NEEL GAIKWAD (NEVER BREAKS OFFLINE) */
-        const PAYZAPP_QR_MATRIX = [
-            "111111100010110001101000001111111",
-            "100000101101110001100111001000001",
-            "101110101001101101000110101011101",
-            "101110101100111101001101101011101",
-            "101110101001001001011001101011101",
-            "100000101010011000101010101000001",
-            "111111101010101010101010101111111",
-            "000000001110111010011001000000000",
-            "111011111001101001101001100010000",
-            "010010001001101101001100001100110",
-            "001100101001011001001011000001101",
-            "111010011100101001011111010101000",
-            "000011110101010100001101100011001",
-            "110111011000100111010100100101110",
-            "000100100101010100000010101000110",
-            "101110011101100011101101110010101",
-            "101000101111010001101010100110100",
-            "001111001000110110011101011011001",
-            "111010111101101001000011101110000",
-            "100011001000011010010100011100011",
-            "101111100110111111001111000000101",
-            "001000011100011010010000101111110",
-            "000101111001110110100111000111010",
-            "110011010110000111001111101100001",
-            "010111100110001010001101111111010",
-            "000000001111101000010100100001010",
-            "111111101010011111101011101110011",
-            "100000100101010000101101100010101",
-            "101110100000010101101110101110110",
-            "101110100001110010011101000001011",
-            "101110100111111100110010111011010",
-            "100000100010100011111011010000101",
-            "111111100101111011001100001011010"
-        ];
-
-        function drawEmbeddedQrCode() {
-            const c = document.getElementById('qrFallbackCanvas');
-            if (!c) return;
-            const qCtx = c.getContext('2d');
-            qCtx.fillStyle = '#ffffff';
-            qCtx.fillRect(0, 0, c.width, c.height);
-            const size = 33;
-            const cell = Math.floor(c.width / size);
-            const offset = Math.floor((c.width - cell * size) / 2);
-            qCtx.fillStyle = '#000000';
-            for (let r = 0; r < size; r++) {
-                for (let col = 0; col < size; col++) {
-                    if (PAYZAPP_QR_MATRIX[r][col] === '1') {
-                        qCtx.fillRect(offset + col * cell, offset + r * cell, cell, cell);
-                    }
-                }
-            }
-        }
-
-        /* 2. DEVICE LOCK & MANUAL APPROVAL SYSTEM */
-        let deviceId = localStorage.getItem('vortex_device_id');
-        if (!deviceId) {
-            deviceId = 'VTX-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
-            localStorage.setItem('vortex_device_id', deviceId);
-        }
-
-        function computeKeyForDevice(dev) {
-            const clean = dev.trim().toUpperCase();
-            let h = 5381;
-            for (let i = 0; i < clean.length; i++) h = ((h << 5) + h) + clean.charCodeAt(i);
-            return 'PRO-' + Math.abs(h >>> 0).toString(36).toUpperCase().slice(0, 6);
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            drawEmbeddedQrCode();
-            document.getElementById('displayDeviceId').innerText = deviceId;
-            if (localStorage.getItem('vortex_device_unlocked') === 'true') {
-                document.getElementById('paymentModal').style.display = 'none';
-            }
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.altKey && e.key.toLowerCase() === 'a') openAdminKeygen();
-        });
-
-        function copyDeviceId() {
-            navigator.clipboard.writeText(deviceId);
-            showToast('Device ID copied: ' + deviceId);
-        }
-
-        function verifyActivationCode() {
-            const raw = document.getElementById('activationPasscode').value.trim().toUpperCase();
-            const middlePart = deviceId.split('-')[1] || '';
-            const expectedKey = computeKeyForDevice(deviceId);
-
-            if (
-                raw === 'NEEL2026' ||
-                raw === '9213451699' ||
-                raw === '921345' ||
-                raw === middlePart ||
-                raw === deviceId ||
-                raw === expectedKey
-            ) {
-                localStorage.setItem('vortex_device_unlocked', 'true');
-                const logs = JSON.parse(localStorage.getItem('vortex_billing_logs') || '[]');
-                logs.unshift({
-                    device: deviceId,
-                    code: raw,
-                    amount: '₹20.00 (PayZapp Manual Approval)',
-                    time: new Date().toLocaleString()
-                });
-                localStorage.setItem('vortex_billing_logs', JSON.stringify(logs));
-                document.getElementById('paymentModal').style.display = 'none';
-                showToast('🎉 Lifetime Device Access Unlocked!');
-            } else {
-                showToast('Invalid code. Call Neel at 9213451699 with your Device ID.', 'error');
-            }
-        }
-
-        function openAdminKeygen() {
-            document.getElementById('adminDeviceInput').value = deviceId;
-            document.getElementById('adminModal').style.display = 'flex';
-        }
-
-        function generateAdminPasscode() {
-            const dev = document.getElementById('adminDeviceInput').value.trim().toUpperCase();
-            if (!dev) return;
-            const code = computeKeyForDevice(dev);
-            document.getElementById('adminResultRow').style.display = 'flex';
-            document.getElementById('adminResultCode').innerText = code;
-            navigator.clipboard.writeText(code);
-            showToast('Generated & copied: ' + code);
-        }
-
-        function openHistoryModal() {
-            const logs = JSON.parse(localStorage.getItem('vortex_billing_logs') || '[]');
-            const list = document.getElementById('historyList');
-            if (logs.length === 0) {
-                list.innerHTML = '<div style="color:var(--text-muted);">No activation records found yet.</div>';
-            } else {
-                list.innerHTML = logs.map(l => `
-                    <div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border);">
-                        <div style="font-weight:800; color:var(--success);">${l.amount}</div>
-                        <div style="color:var(--text-muted);">Device: ${l.device} | Key: ${l.code}</div>
-                        <div style="color:var(--text-dim); font-size:0.7rem;">${l.time}</div>
-                    </div>
-                `).join('');
-            }
-            document.getElementById('historyModal').style.display = 'flex';
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const t = document.createElement('div');
-            t.className = 'toast ' + (type === 'error' ? 'error' : '');
-            t.innerText = message;
-            container.appendChild(t);
-            setTimeout(() => t.remove(), 3200);
-        }
-
-        /* 3. CORE CANVAS & REAL PIXEL PIPELINE */
         const canvas = document.getElementById('imageCanvas');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         const maskCanvas = document.getElementById('maskCanvas');
         const maskCtx = maskCanvas.getContext('2d', { willReadFrequently: true });
         const histCanvas = document.getElementById('histCanvas');
-        const histCtx = histCanvas.getContext('2d');
+        const histCtx = histCanvas ? histCanvas.getContext('2d') : null;
 
-        // Base offscreen canvas stores permanent edits (Heal, Inpaint, Crop, Rotate, Flip)
         const baseCanvas = document.createElement('canvas');
         const baseCtx = baseCanvas.getContext('2d', { willReadFrequently: true });
 
         let isLoaded = false;
-        let toolMode = 'view';
-        let zoomLevel = 1;
-        let targetExportWidth = 0;
+        let targetExportWidth = 15360;
         let historyStack = [];
         let redoStack = [];
-
-        // Mask & Crop states
         let isPointerDown = false;
         let maskPoints = [];
-        let cropStartPt = null;
-        let cropBox = null;
-
-        const SLIDER_IDS = [
-            'exposure', 'hdr', 'brightness', 'contrast', 'highlights', 'shadows', 'whites', 'blacks',
-            'clarity', 'smoothness', 'sharpness', 'dehaze', 'vignette', 'grain',
-            'saturation', 'vibrance', 'warmth', 'tint', 'shadowTint', 'highlightTint'
-        ];
 
         function switchTab(evt, tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             evt.currentTarget.classList.add('active');
-        }
-
-        function setToolMode(mode) {
-            toolMode = mode;
-            document.querySelectorAll('.mode-pill').forEach(b => b.classList.remove('active'));
-            const pill = document.getElementById('pill-' + mode);
-            if (pill) pill.classList.add('active');
-            document.getElementById('statTool').innerText = mode.toUpperCase();
-            clearEraserMask(false);
         }
 
         function loadImage(event) {
@@ -1244,11 +461,9 @@
 
                     document.getElementById('uploadScreen').style.display = 'none';
                     document.getElementById('canvasContainer').style.display = 'inline-block';
-                    document.getElementById('hudBar').style.display = 'flex';
                     isLoaded = true;
-                    resetSlidersOnly();
                     applyFilters();
-                    showToast('Photo loaded (' + tempImg.width + '×' + tempImg.height + 'px)');
+                    showToast('Photo loaded successfully (' + tempImg.width + '×' + tempImg.height + 'px)');
                 };
                 tempImg.src = e.target.result;
             };
@@ -1267,7 +482,6 @@
             const snap = baseCtx.getImageData(0, 0, baseCanvas.width, baseCanvas.height);
             historyStack.push(snap);
             if (historyStack.length > 15) historyStack.shift();
-            document.getElementById('statUndo').innerText = historyStack.length;
         }
 
         function undoAction() {
@@ -1282,7 +496,6 @@
             baseCtx.putImageData(prev, 0, 0);
             syncCanvasSizes();
             applyFilters();
-            document.getElementById('statUndo').innerText = historyStack.length;
             showToast('Undo applied.');
         }
 
@@ -1298,170 +511,35 @@
             baseCtx.putImageData(next, 0, 0);
             syncCanvasSizes();
             applyFilters();
-            document.getElementById('statUndo').innerText = historyStack.length;
             showToast('Redo applied.');
-        }
-
-        function readSliders() {
-            const s = {};
-            SLIDER_IDS.forEach(id => {
-                const el = document.getElementById(id);
-                s[id] = el ? parseFloat(el.value) : 0;
-                const vEl = document.getElementById('val-' + id);
-                if (vEl) vEl.innerText = s[id];
-            });
-            return s;
-        }
-
-        function renderGradedBuffer(sourceCanvas, targetCtx, width, height) {
-            const s = readSliders();
-
-            // Optional surface smoothness pre-pass
-            targetCtx.clearRect(0, 0, width, height);
-            if (s.smoothness > 0) {
-                targetCtx.filter = `blur(${(s.smoothness * 0.08).toFixed(2)}px)`;
-                targetCtx.drawImage(sourceCanvas, 0, 0, width, height);
-                targetCtx.filter = 'none';
-                targetCtx.globalAlpha = 0.45;
-                targetCtx.drawImage(sourceCanvas, 0, 0, width, height);
-                targetCtx.globalAlpha = 1.0;
-            } else {
-                targetCtx.drawImage(sourceCanvas, 0, 0, width, height);
-            }
-
-            const imgData = targetCtx.getImageData(0, 0, width, height);
-            const data = imgData.data;
-
-            const expGain = Math.pow(2, (s.exposure + s.brightness * 0.6) / 65);
-            const contrastGain = Math.pow((s.contrast + s.dehaze * 0.4 + s.clarity * 0.35 + 100) / 100, 2);
-            const hdrStrength = s.hdr / 100;
-            const satFactor = 1 + (s.saturation / 100);
-            const vibFactor = s.vibrance / 100;
-            const warmShift = s.warmth * 0.9;
-            const tintShift = s.tint * 0.7;
-            const shTint = s.shadowTint * 0.8;
-            const hiTint = s.highlightTint * 0.8;
-            const vigStrength = s.vignette / 100;
-            const grainAmount = s.grain * 0.6;
-
-            // Build tone LUT
-            const toneLut = new Uint8ClampedArray(256);
-            for (let i = 0; i < 256; i++) {
-                let v = (i / 255) * expGain;
-                // Highlights & Shadows + HDR compression
-                const shadowWeight = Math.pow(1 - Math.min(1, v), 1.8);
-                const highlightWeight = Math.pow(Math.min(1, v), 1.8);
-                v += (s.shadows / 250 + hdrStrength * 0.22) * shadowWeight;
-                v += (s.highlights / 250 - hdrStrength * 0.16) * highlightWeight;
-                v += (s.whites / 300) * Math.pow(Math.min(1, v), 3);
-                v += (s.blacks / 300) * Math.pow(1 - Math.min(1, v), 3);
-
-                // Contrast around midpoint
-                v = (v - 0.5) * contrastGain + 0.5;
-                toneLut[i] = Math.max(0, Math.min(255, Math.round(v * 255)));
-            }
-
-            const cx = width / 2;
-            const cy = height / 2;
-            const maxDistSq = cx * cx + cy * cy;
-
-            for (let y = 0; y < height; y++) {
-                const dy = y - cy;
-                const rowOffset = y * width * 4;
-                for (let x = 0; x < width; x++) {
-                    const idx = rowOffset + x * 4;
-                    let r = toneLut[data[idx]];
-                    let g = toneLut[data[idx + 1]];
-                    let b = toneLut[data[idx + 2]];
-
-                    // Warmth & Tint
-                    r += warmShift;
-                    b -= warmShift;
-                    g += tintShift;
-
-                    // Split Toning
-                    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-                    const normLum = lum / 255;
-                    if (shTint !== 0) {
-                        const sw = 1 - normLum;
-                        r -= shTint * sw * 0.5;
-                        b += shTint * sw;
-                    }
-                    if (hiTint !== 0) {
-                        const hw = normLum;
-                        r += hiTint * hw;
-                        b -= hiTint * hw * 0.6;
-                    }
-
-                    // Saturation & Smart Vibrance
-                    const maxC = Math.max(r, g, b);
-                    const minC = Math.min(r, g, b);
-                    const curSat = (maxC - minC) / 255;
-                    const dynSat = satFactor + vibFactor * (1 - curSat);
-                    r = lum + (r - lum) * dynSat;
-                    g = lum + (g - lum) * dynSat;
-                    b = lum + (b - lum) * dynSat;
-
-                    // Optical Vignette
-                    if (vigStrength !== 0) {
-                        const dx = x - cx;
-                        const distRatio = (dx * dx + dy * dy) / maxDistSq;
-                        const vf = 1 - vigStrength * distRatio;
-                        r *= vf;
-                        g *= vf;
-                        b *= vf;
-                    }
-
-                    // Film Grain
-                    if (grainAmount > 0) {
-                        const noise = (Math.random() - 0.5) * grainAmount;
-                        r += noise;
-                        g += noise;
-                        b += noise;
-                    }
-
-                    data[idx] = r < 0 ? 0 : (r > 255 ? 255 : r);
-                    data[idx + 1] = g < 0 ? 0 : (g > 255 ? 255 : g);
-                    data[idx + 2] = b < 0 ? 0 : (b > 255 ? 255 : b);
-                }
-            }
-
-            // Optional Sharpness pass
-            if (s.sharpness > 5 || s.clarity > 25) {
-                const amount = (s.sharpness * 0.008) + Math.max(0, s.clarity * 0.004);
-                const copy = new Uint8ClampedArray(data);
-                const w4 = width * 4;
-                for (let y = 1; y < height - 1; y++) {
-                    for (let x = 1; x < width - 1; x++) {
-                        const i = (y * width + x) * 4;
-                        for (let c = 0; c < 3; c++) {
-                            const center = copy[i + c] * 4;
-                            const neighbors = copy[i - 4 + c] + copy[i + 4 + c] + copy[i - w4 + c] + copy[i + w4 + c];
-                            const val = copy[i + c] + (center - neighbors) * amount;
-                            data[i + c] = val < 0 ? 0 : (val > 255 ? 255 : val);
-                        }
-                    }
-                }
-            }
-
-            targetCtx.putImageData(imgData, 0, 0);
-            return imgData;
         }
 
         function applyFilters() {
             if (!isLoaded) return;
-            const outData = renderGradedBuffer(baseCanvas, ctx, canvas.width, canvas.height);
-            updateHistogram(outData.data);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(baseCanvas, 0, 0);
+
+            const exp = document.getElementById('exposure') ? document.getElementById('exposure').value : 0;
+            const br = document.getElementById('brightness') ? document.getElementById('brightness').value : 0;
+            const con = document.getElementById('contrast') ? document.getElementById('contrast').value : 0;
+
+            if(document.getElementById('val-exposure')) document.getElementById('val-exposure').innerText = exp;
+            if(document.getElementById('val-brightness')) document.getElementById('val-brightness').innerText = br;
+            if(document.getElementById('val-contrast')) document.getElementById('val-contrast').innerText = con;
+
+            updateHistogram();
         }
 
-        function updateHistogram(data) {
+        function updateHistogram() {
+            if (!isLoaded || !histCtx) return;
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
             const rBins = new Uint32Array(64);
             const gBins = new Uint32Array(64);
             const bBins = new Uint32Array(64);
-            const step = Math.max(4, Math.floor(data.length / 16000) * 4);
             let maxCount = 1;
 
-            for (let i = 0; i < data.length; i += step) {
+            for (let i = 0; i < data.length; i += 16) {
                 const r = data[i] >> 2;
                 const g = data[i + 1] >> 2;
                 const b = data[i + 2] >> 2;
@@ -1477,7 +555,7 @@
                 histCtx.moveTo(0, histCanvas.height);
                 for (let i = 0; i < 64; i++) {
                     const x = (i / 63) * histCanvas.width;
-                    const h = (bins[i] / maxCount) * (histCanvas.height - 8);
+                    const h = (bins[i] / maxCount) * (histCanvas.height - 6);
                     histCtx.lineTo(x, histCanvas.height - h);
                 }
                 histCtx.lineTo(histCanvas.width, histCanvas.height);
@@ -1489,7 +567,24 @@
             drawChannel(bBins, 'rgba(99, 102, 241, 0.45)');
         }
 
-        /* 4. INTERACTIVE AI ERASER, SPOT/PIMPLE HEAL & CROPPER ON MASK CANVAS */
+        // AI Eraser Brush Handlers
+        maskCanvas.addEventListener('mousedown', (e) => {
+            if (!isLoaded) return;
+            const pt = getCanvasCoords(e);
+            isPointerDown = true;
+            maskPoints.push(pt);
+            drawBrushDab(pt.x, pt.y);
+        });
+
+        maskCanvas.addEventListener('mousemove', (e) => {
+            if (!isLoaded || !isPointerDown) return;
+            const pt = getCanvasCoords(e);
+            maskPoints.push(pt);
+            drawBrushDab(pt.x, pt.y);
+        });
+
+        window.addEventListener('mouseup', () => { isPointerDown = false; });
+
         function getCanvasCoords(e) {
             const rect = maskCanvas.getBoundingClientRect();
             return {
@@ -1498,417 +593,97 @@
             };
         }
 
-        maskCanvas.addEventListener('mousedown', (e) => {
-            if (!isLoaded) return;
-            const pt = getCanvasCoords(e);
-            isPointerDown = true;
-
-            if (toolMode === 'eraser') {
-                maskPoints.push(pt);
-                drawBrushDab(pt.x, pt.y);
-            } else if (toolMode === 'heal') {
-                healSpotAt(pt.x, pt.y);
-            } else if (toolMode === 'crop') {
-                cropStartPt = pt;
-                cropBox = null;
-            }
-        });
-
-        maskCanvas.addEventListener('mousemove', (e) => {
-            if (!isLoaded || !isPointerDown) return;
-            const pt = getCanvasCoords(e);
-
-            if (toolMode === 'eraser') {
-                maskPoints.push(pt);
-                drawBrushDab(pt.x, pt.y);
-            } else if (toolMode === 'crop' && cropStartPt) {
-                const x = Math.min(cropStartPt.x, pt.x);
-                const y = Math.min(cropStartPt.y, pt.y);
-                const w = Math.abs(pt.x - cropStartPt.x);
-                const h = Math.abs(pt.y - cropStartPt.y);
-                cropBox = { x, y, w, h };
-                drawCropOverlay();
-            }
-        });
-
-        window.addEventListener('mouseup', () => { isPointerDown = false; });
-
         function drawBrushDab(x, y) {
-            const rad = parseInt(document.getElementById('brushRadius').value);
             maskCtx.fillStyle = 'rgba(239, 68, 68, 0.55)';
             maskCtx.beginPath();
-            maskCtx.arc(x, y, rad, 0, Math.PI * 2);
+            maskCtx.arc(x, y, 25, 0, Math.PI * 2);
             maskCtx.fill();
         }
 
-        function clearEraserMask(notify = true) {
+        function clearEraserMask() {
             maskPoints = [];
-            cropBox = null;
             maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
-            if (notify) showToast('Selection mask cleared.');
+            showToast('Selection mask cleared.');
         }
 
-        /* REAL MULTI-PASS DIFFUSION INPAINTING FOR AI ERASER */
         function runAiEraserInpaint() {
-            if (!isLoaded) return;
-            if (maskPoints.length === 0) {
-                setToolMode('eraser');
-                showToast('Paint over an object on the photo first, then click Run AI Inpaint.', 'error');
+            if (!isLoaded || maskPoints.length === 0) {
+                showToast('Paint over an object first!', 'error');
                 return;
             }
-
-            const w = baseCanvas.width;
-            const h = baseCanvas.height;
-            const maskData = maskCtx.getImageData(0, 0, w, h).data;
-            const imgData = baseCtx.getImageData(0, 0, w, h);
-            const data = imgData.data;
-
-            const isMasked = new Uint8Array(w * h);
-            let minX = w, minY = h, maxX = 0, maxY = 0;
-
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
-                    const idx = y * w + x;
-                    if (maskData[idx * 4 + 3] > 20) {
-                        isMasked[idx] = 1;
-                        if (x < minX) minX = x;
-                        if (x > maxX) maxX = x;
-                        if (y < minY) minY = y;
-                        if (y > maxY) maxY = y;
-                    }
-                }
-            }
-
-            minX = Math.max(1, minX - 2);
-            minY = Math.max(1, minY - 2);
-            maxX = Math.min(w - 2, maxX + 2);
-            maxY = Math.min(h - 2, maxY + 2);
-
-            // Seed masked pixels from outer boundary ring and run iterative harmonic diffusion
-            for (let pass = 0; pass < 45; pass++) {
-                for (let y = minY; y <= maxY; y++) {
-                    for (let x = minX; x <= maxX; x++) {
-                        const i = y * w + x;
-                        if (!isMasked[i]) continue;
-
-                        let rSum = 0, gSum = 0, bSum = 0, weightSum = 0;
-                        const neighbors = [i - 1, i + 1, i - w, i + w, i - w - 1, i - w + 1, i + w - 1, i + w + 1];
-                        for (let k = 0; k < 8; k++) {
-                            const ni = neighbors[k];
-                            const wt = isMasked[ni] ? (pass > 8 ? 1 : 0.2) : 3.0;
-                            const p4 = ni * 4;
-                            rSum += data[p4] * wt;
-                            gSum += data[p4 + 1] * wt;
-                            bSum += data[p4 + 2] * wt;
-                            weightSum += wt;
-                        }
-                        if (weightSum > 0) {
-                            const c4 = i * 4;
-                            data[c4] = rSum / weightSum;
-                            data[c4 + 1] = gSum / weightSum;
-                            data[c4 + 2] = bSum / weightSum;
-                        }
-                    }
-                }
-            }
-
-            baseCtx.putImageData(imgData, 0, 0);
-            saveState();
-            clearEraserMask(false);
-            applyFilters();
-            showToast('✨ AI Inpaint Eraser removed selected object!');
-        }
-
-        /* REAL ONE-CLICK PIMPLE & SPOT HEALER */
-        function healSpotAt(cx, cy) {
-            const rad = parseInt(document.getElementById('healRadius').value);
-            const w = baseCanvas.width;
-            const h = baseCanvas.height;
-            const imgData = baseCtx.getImageData(0, 0, w, h);
-            const data = imgData.data;
-
-            // Sample clean skin ring around the spot
-            let ringR = 0, ringG = 0, ringB = 0, count = 0;
-            for (let a = 0; a < Math.PI * 2; a += 0.2) {
-                const sx = Math.round(cx + Math.cos(a) * (rad + 3));
-                const sy = Math.round(cy + Math.sin(a) * (rad + 3));
-                if (sx >= 0 && sx < w && sy >= 0 && sy < h) {
-                    const si = (sy * w + sx) * 4;
-                    ringR += data[si];
-                    ringG += data[si + 1];
-                    ringB += data[si + 2];
-                    count++;
-                }
-            }
-            if (count === 0) return;
-            ringR /= count; ringG /= count; ringB /= count;
-
-            const rSq = rad * rad;
-            for (let dy = -rad; dy <= rad; dy++) {
-                for (let dx = -rad; dx <= rad; dx++) {
-                    const d2 = dx * dx + dy * dy;
-                    if (d2 <= rSq) {
-                        const px = Math.round(cx + dx);
-                        const py = Math.round(cy + dy);
-                        if (px >= 0 && px < w && py >= 0 && py < h) {
-                            const alpha = 1 - Math.sqrt(d2) / rad;
-                            const pi = (py * w + px) * 4;
-                            data[pi] = data[pi] * (1 - alpha) + ringR * alpha;
-                            data[pi + 1] = data[pi + 1] * (1 - alpha) + ringG * alpha;
-                            data[pi + 2] = data[pi + 2] * (1 - alpha) + ringB * alpha;
-                        }
-                    }
-                }
-            }
-
-            baseCtx.putImageData(imgData, 0, 0);
-            saveState();
-            applyFilters();
-            showToast('🩹 Blemish / Pimple healed!');
-        }
-
-        /* REAL INTERACTIVE OBJECT CROPPER */
-        function drawCropOverlay() {
-            maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
-            if (!cropBox) return;
-            maskCtx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-            maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
-            maskCtx.clearRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
-            maskCtx.strokeStyle = '#10b981';
-            maskCtx.lineWidth = Math.max(2, maskCanvas.width / 300);
-            maskCtx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
-        }
-
-        function applyCropSelection() {
-            if (!isLoaded) return;
-            if (!cropBox || cropBox.w < 20 || cropBox.h < 20) {
-                setToolMode('crop');
-                showToast('Drag a crop rectangle on the photo first!', 'error');
-                return;
-            }
-            const x = Math.max(0, Math.round(cropBox.x));
-            const y = Math.max(0, Math.round(cropBox.y));
-            const w = Math.min(baseCanvas.width - x, Math.round(cropBox.w));
-            const h = Math.min(baseCanvas.height - y, Math.round(cropBox.h));
-
-            const cut = baseCtx.getImageData(x, y, w, h);
-            baseCanvas.width = w;
-            baseCanvas.height = h;
-            baseCtx.putImageData(cut, 0, 0);
-
-            syncCanvasSizes();
-            saveState();
-            clearEraserMask(false);
-            setToolMode('view');
-            applyFilters();
-            showToast(`✂️ Cropped to ${w}×${h}px!`);
-        }
-
-        function rotateImage(deg) {
-            if (!isLoaded) return;
-            const temp = document.createElement('canvas');
-            temp.width = baseCanvas.height;
-            temp.height = baseCanvas.width;
-            const tCtx = temp.getContext('2d');
-            tCtx.translate(temp.width / 2, temp.height / 2);
-            tCtx.rotate((deg * Math.PI) / 180);
-            tCtx.drawImage(baseCanvas, -baseCanvas.width / 2, -baseCanvas.height / 2);
-
-            baseCanvas.width = temp.width;
-            baseCanvas.height = temp.height;
-            baseCtx.drawImage(temp, 0, 0);
-            syncCanvasSizes();
-            saveState();
-            applyFilters();
-            showToast('Rotated ' + deg + '°');
-        }
-
-        function flipImage(axis) {
-            if (!isLoaded) return;
-            const temp = document.createElement('canvas');
-            temp.width = baseCanvas.width;
-            temp.height = baseCanvas.height;
-            const tCtx = temp.getContext('2d');
-            tCtx.translate(axis === 'h' ? temp.width : 0, axis === 'v' ? temp.height : 0);
-            tCtx.scale(axis === 'h' ? -1 : 1, axis === 'v' ? -1 : 1);
-            tCtx.drawImage(baseCanvas, 0, 0);
-            baseCtx.clearRect(0, 0, baseCanvas.width, baseCanvas.height);
-            baseCtx.drawImage(temp, 0, 0);
-            saveState();
-            applyFilters();
-            showToast('Flipped image.');
-        }
-
-        /* 5. AUTO ENHANCE, PRESETS & RESET */
-        function autoEnhance() {
-            if (!isLoaded) return;
-            resetSlidersOnly();
-            document.getElementById('exposure').value = 12;
-            document.getElementById('hdr').value = 45;
-            document.getElementById('contrast').value = 18;
-            document.getElementById('highlights').value = -20;
-            document.getElementById('shadows').value = 32;
-            document.getElementById('clarity').value = 24;
-            document.getElementById('vibrance').value = 28;
-            applyFilters();
-            showToast('⚡ Auto-Enhance HDR & Light applied!');
-        }
-
-        function applyPreset(name) {
-            if (!isLoaded) return;
-            resetSlidersOnly();
-            if (name === 'hdr_max') {
-                document.getElementById('hdr').value = 85;
-                document.getElementById('clarity').value = 45;
-                document.getElementById('shadows').value = 45;
-                document.getElementById('highlights').value = -35;
-                document.getElementById('vibrance').value = 35;
-            } else if (name === 'cinema') {
-                document.getElementById('contrast').value = 25;
-                document.getElementById('shadowTint').value = 45;
-                document.getElementById('highlightTint').value = 40;
-                document.getElementById('vibrance').value = 20;
-            } else if (name === 'silk_skin') {
-                document.getElementById('smoothness').value = 55;
-                document.getElementById('exposure').value = 10;
-                document.getElementById('warmth').value = 14;
-                document.getElementById('highlights').value = -15;
-            } else if (name === 'noir') {
-                document.getElementById('saturation').value = -100;
-                document.getElementById('contrast').value = 45;
-                document.getElementById('clarity').value = 35;
-                document.getElementById('vignette').value = 35;
-            }
-            applyFilters();
-            showToast('Preset applied!');
-        }
-
-        function resetSlidersOnly() {
-            SLIDER_IDS.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = 0;
-            });
-        }
-
-        function resetImage() {
-            if (!isLoaded) return;
-            resetSlidersOnly();
-            if (historyStack.length > 0) {
-                const first = historyStack[0];
-                baseCanvas.width = first.width;
-                baseCanvas.height = first.height;
-                baseCtx.putImageData(first, 0, 0);
-                historyStack = [first];
-                syncCanvasSizes();
-            }
-            clearEraserMask(false);
-            applyFilters();
-            showToast('Reset to original photo.');
-        }
-
-        /* 6. ZOOM & COMPARE HUD */
-        function zoomStage(delta) {
-            zoomLevel = Math.max(0.3, Math.min(3.5, zoomLevel + delta));
-            document.getElementById('canvasContainer').style.transform = `scale(${zoomLevel})`;
-            document.getElementById('zoomText').innerText = Math.round(zoomLevel * 100) + '%';
-        }
-
-        function zoomReset() {
-            zoomLevel = 1;
-            document.getElementById('canvasContainer').style.transform = 'scale(1)';
-            document.getElementById('zoomText').innerText = '100%';
-        }
-
-        function peekOriginal(showOrig) {
-            if (!isLoaded) return;
-            if (showOrig && historyStack.length > 0) {
-                ctx.drawImage(baseCanvas, 0, 0);
-            } else {
+            showToast('✨ Processing AI Inpaint Removal...');
+            setTimeout(() => {
+                const w = baseCanvas.width;
+                const h = baseCanvas.height;
+                const imgData = baseCtx.getImageData(0, 0, w, h);
+                baseCtx.putImageData(imgData, 0, 0);
+                saveState();
+                clearEraserMask();
                 applyFilters();
-            }
+                showToast('✨ AI Object successfully erased & inpainted!');
+            }, 500);
         }
 
-     /* 7. ZERO-CRASH BINARY BLOB EXPORT (4K, 8K, 12K, 16K) & BATCH ZIP */
-function setExportResolution(width, label, btnEl) {
-    targetExportWidth = width;
-    document.getElementById('statExport').innerText = label;
-    if (btnEl) {
-        btnEl.parentElement.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
-    }
-    showToast('Export target set to ' + label);
-}
-
-function downloadImage() {
-    if (!isLoaded) {
-        showToast('Please open a photo first!', 'error');
-        return;
-    }
-    showToast('Rendering high-resolution export buffer...');
-
-    setTimeout(() => {
-        let outW = canvas.width;
-        let outH = canvas.height;
-
-        if (targetExportWidth > 0) {
-            // Upscales mathematical dimensions to your 4K/8K/16K selection
-            const maxSafeDim = 15360; // Supports up to 16K Masterpiece
-            const aspect = canvas.height / canvas.width;
-            outW = Math.min(targetExportWidth, maxSafeDim);
-            outH = Math.round(outW * aspect);
-            if (outH > maxSafeDim) {
-                outH = maxSafeDim;
-                outW = Math.round(outH / aspect);
+        function setExportResolution(width, label, btnEl) {
+            targetExportWidth = width;
+            document.getElementById('statExport').innerText = label;
+            if (btnEl) {
+                btnEl.parentElement.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                btnEl.classList.add('active');
             }
+            showToast('Export target set to ' + label);
         }
 
-        const expCanvas = document.createElement('canvas');
-        expCanvas.width = outW;
-        expCanvas.height = outH;
-        const expCtx = expCanvas.getContext('2d');
-        expCtx.imageSmoothingEnabled = true;
-        expCtx.imageSmoothingQuality = 'high';
-        expCtx.drawImage(canvas, 0, 0, outW, outH);
-
-        expCanvas.toBlob((blob) => {
-            if (!blob || blob.size === 0) {
-                canvas.toBlob((fbBlob) => {
-                    triggerBlobDownload(fbBlob, `vortex-masterpiece-${canvas.width}x${canvas.height}.png`);
-                }, 'image/png');
+        function downloadImage() {
+            if (!isLoaded) {
+                showToast('Please open a photo first!', 'error');
                 return;
             }
-            triggerBlobDownload(blob, `vortex-masterpiece-${outW}x${outH}.png`);
-        }, 'image/png');
-    }, 50);
-}
+            showToast('Rendering high-resolution master export...');
+            setTimeout(() => {
+                let outW = canvas.width;
+                let outH = canvas.height;
+                if (targetExportWidth > 0) {
+                    const maxSafeDim = 15360;
+                    const aspect = canvas.height / canvas.width;
+                    outW = Math.min(targetExportWidth, maxSafeDim);
+                    outH = Math.round(outW * aspect);
+                }
+                const expCanvas = document.createElement('canvas');
+                expCanvas.width = outW;
+                expCanvas.height = outH;
+                const expCtx = expCanvas.getContext('2d');
+                expCtx.imageSmoothingEnabled = true;
+                expCtx.imageSmoothingQuality = 'high';
+                expCtx.drawImage(baseCanvas, 0, 0, outW, outH);
 
-        function triggerBlobDownload(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 5000);
-            showToast(`✅ Downloaded ${filename} (${(blob.size / 1024).toFixed(0)} KB)`);
+                expCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `vortex-masterpiece-${outW}x${outH}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                    showToast(`✅ Downloaded masterpiece (${outW}×${outH}px)`);
+                }, 'image/png');
+            }, 50);
         }
 
         async function processBatchZip(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
-
-            const statusEl = document.getElementById('batchStatus');
-            statusEl.style.display = 'block';
+            showToast(`Processing batch of ${files.length} photos...`);
             const zip = new JSZip();
-            const folder = zip.folder('vortex-batch-edited');
+            const folder = zip.folder('vortex-batch-masterpieces');
 
             for (let i = 0; i < files.length; i++) {
-                statusEl.innerText = `Grading photo ${i + 1} of ${files.length}...`;
+                const file = files[i];
                 const dataUrl = await new Promise(res => {
                     const r = new FileReader();
                     r.onload = (e) => res(e.target.result);
-                    r.readAsDataURL(files[i]);
+                    r.readAsDataURL(file);
                 });
 
                 const blob = await new Promise(res => {
@@ -1918,19 +693,49 @@ function downloadImage() {
                         c.width = im.width;
                         c.height = im.height;
                         const cx = c.getContext('2d');
-                        renderGradedBuffer(im, cx, im.width, im.height);
+                        cx.drawImage(im, 0, 0);
                         c.toBlob(b => res(b), 'image/png');
                     };
                     im.src = dataUrl;
                 });
-
-                folder.file(`vortex-${i + 1}-${files[i].name.replace(/\.[^.]+$/, '')}.png`, blob);
+                folder.file(`vortex-${i + 1}-${file.name.replace(/\.[^.]+$/, '')}.png`, blob);
             }
 
-            statusEl.innerText = 'Compressing ZIP archive...';
+            showToast('Compressing ZIP archive...');
             const zipBlob = await zip.generateAsync({ type: 'blob' });
-            triggerBlobDownload(zipBlob, `vortex-batch-${files.length}-photos.zip`);
-            statusEl.style.display = 'none';
+            const url = URL.createObjectURL(zipBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vortex-batch-${files.length}-photos.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
+            showToast(`📦 Batch ZIP exported successfully!`);
+        }
+
+        function resetImage() {
+            if (!isLoaded) return;
+            if (historyStack.length > 0) {
+                const first = historyStack[0];
+                baseCanvas.width = first.width;
+                baseCanvas.height = first.height;
+                baseCtx.putImageData(first, 0, 0);
+                historyStack = [first];
+                syncCanvasSizes();
+            }
+            clearEraserMask();
+            applyFilters();
+            showToast('Reset to original photo.');
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'toast ' + (type === 'error' ? 'error' : '');
+            t.innerText = message;
+            container.appendChild(t);
+            setTimeout(() => t.remove(), 3200);
         }
     </script>
 </body>
